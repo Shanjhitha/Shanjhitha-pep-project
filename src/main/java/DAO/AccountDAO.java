@@ -85,13 +85,13 @@ public class AccountDAO {
     }
 
     // Check is account login is valid
-    public Account validateLogin(String username, String password) throws SQLException{
+    public Account validateLogin(Account user){
         Connection connection = ConnectionUtil.getConnection();
         try{
             String sql = "SELECT * FROM Account WHERE username = ? AND password = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, username);
-            ps.setString(2, password);
+            ps.setString(1, user.getUsername());
+            ps.setString(2, user.getPassword());
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()){
@@ -123,19 +123,20 @@ public class AccountDAO {
     }
 
     // get a specific account by account_id
-    public Account getAccountById(int account_id){
+    public boolean getAccountById(int account_id){
         Connection connection = ConnectionUtil.getConnection();
         try{
             String sql = "SELECT * FROM Account WHERE account_id = ?;";
             PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, account_id);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()){
-                return new Account(rs.getInt("account_id"), rs.getString("username"), rs.getString("password"));
+                return true;
             }
         }catch(SQLException e){
             System.out.println(e.getMessage());
         }
-        return null;
+        return false;
     }
 }

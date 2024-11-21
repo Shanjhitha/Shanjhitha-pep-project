@@ -3,7 +3,7 @@ package Service;
 import Model.Account;
 import DAO.AccountDAO;
 import java.util.List;
-import java.sql.SQLException;
+
 
 public class AccountService {
     AccountDAO accountDAO;
@@ -16,23 +16,31 @@ public class AccountService {
         this.accountDAO = accountDAO;
     }
 
-    public Account insertNewAccount(String username, String password){
-        Account accountExists = accountDAO.checkIfUsernameExists(username);
-        if (accountExists != null) {
-            System.out.println("Username already exists. Please choose a different username.");
-            return null; // Return null or throw exception?
-        }
+    public Account insertNewAccount(Account account){
 
-        // Create a new account and return the created Account object
-        Account newAccount = new Account(username, password);
-        return accountDAO.createAccount(newAccount);
+        
+        if(account.getUsername().isBlank() || account.getPassword().length() < 4){
+            return null;
+        }
+        List<Account> a = accountDAO.getAllAccounts();
+        for (Account b: a){
+            if(b.getAccount_id() == account.getAccount_id()){
+                return null;
+            }
+        }
+        return accountDAO.createAccount(account);
     }
 
     //check with instructor
-    public Account realUser(String username, String password) throws SQLException{
-        return accountDAO.validateLogin(username, password);
+    public Account realUser(Account account){
+        Account user_account = accountDAO.validateLogin(account);
+        if(user_account != null){
+            return user_account;
+        }
+        return null;
     }
     
+    /* 
     // Get an account by account_id
     public Account searchAccountById(int accountId) {
         return accountDAO.getAccountById(accountId);
@@ -42,4 +50,5 @@ public class AccountService {
     public List<Account> searchAllAccounts() {
         return accountDAO.getAllAccounts();
     }
+        */
 }
