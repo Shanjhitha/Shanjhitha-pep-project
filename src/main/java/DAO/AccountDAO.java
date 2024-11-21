@@ -4,7 +4,6 @@ import Model.Account;
 import Util.ConnectionUtil;
 
 import java.sql.*;
-import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,29 +61,31 @@ public class AccountDAO {
                 }
             }
         }catch(SQLException e){
-            System.out.println("createAccount Error: " + e.getMessage());
+            System.out.println(e.getMessage());
         }
         return null;
     }
 
-    // check if username is already present
-    public boolean checkIfUsernameExists(String username){
+    // check if username is already present #return the Username/Account*
+    public Account checkIfUsernameExists(String username){
         Connection connection = ConnectionUtil.getConnection();
         try{
             String sql = "SELECT * FROM Account WHERE username = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
-            return rs.next(); //return true, if username already exists
-            // similar above if statment TODO; Refer flight tracker
+            //return rs.next(); //return true, if username already exists #while or if* 
+            while (rs.next()){
+                return new Account(rs.getInt("account_id"), rs.getString("username"), rs.getString("password"));
+            }
         }catch (SQLException e){
-            System.out.println("Username Already Exists error : " + e.getMessage());
+            System.out.println(e.getMessage());
         }
-        return false;
+        return null;
     }
 
     // Check is account login is valid
-    public boolean validateLogin(String username, String password) throws SQLException{
+    public Account validateLogin(String username, String password) throws SQLException{
         Connection connection = ConnectionUtil.getConnection();
         try{
             String sql = "SELECT * FROM Account WHERE username = ? AND password = ?";
@@ -93,14 +94,13 @@ public class AccountDAO {
             ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
 
-            if (rs.next()){
-                return true;
+            while (rs.next()){
+                return new Account(rs.getInt("account_id"), rs.getString("username"), rs.getString("password"));
             }
-            return rs.next();
         } catch (SQLException e) {
-            System.out.println("Login Validation Error: " + e.getMessage());
+            System.out.println(e.getMessage()); //no priint statements *
         } 
-        return false;
+        return null;
     }
 
     // get all accounts
@@ -112,12 +112,12 @@ public class AccountDAO {
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
     
-            while(rs.next()){
+            while(rs.next()){ //** 2nd method */
                 Account account = new Account(rs.getInt("account_id"), rs.getString("username"), rs.getString("password"));
                 accounts.add(account);
             }
         }catch(SQLException e){
-            System.out.println("Getting ALL accounts error: " + e.getMessage());
+            System.out.println(e.getMessage());
         }
         return accounts;
     }
@@ -134,36 +134,8 @@ public class AccountDAO {
                 return new Account(rs.getInt("account_id"), rs.getString("username"), rs.getString("password"));
             }
         }catch(SQLException e){
-            System.out.println("getAccountById Error: " + e.getMessage());
+            System.out.println(e.getMessage());
         }
         return null;
-    }
-
-    // Update accounts if needed
-    public void updateAccount(int account_id, Account account){
-        Connection connection = ConnectionUtil.getConnection();
-        try{
-            String sql = "UPDATE Account SET username = ?, password = ? WHERE account_id = ?";
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, account.getUsername());
-            ps.setString(2, account.getPassword());
-            ps.setInt(3, account_id);
-            ps.executeUpdate();
-        }catch(SQLException e){
-            System.out.println("Updating Account Error: " + e.getMessage());
-        }
-    }
-
-    // delete any account if needed
-    public void deleteAccount(int account_id){
-        Connection connection = ConnectionUtil.getConnection();
-        try{
-            String sql = "DELETE FROM Account WHERE account_id = ?";
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setInt(1, account_id);
-            ps.executeUpdate();
-        }catch(SQLException e){
-            System.out.println("Deleting Account Error: " + e.getMessage());
-        }
     }
 }
