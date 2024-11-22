@@ -70,7 +70,7 @@ public class SocialMediaController {
         if (loggedUser != null){
             context.json(mapper.writeValueAsString(loggedUser));
         }else{
-            context.status(400);
+            context.status(401);
         }
     }
 
@@ -91,36 +91,25 @@ public class SocialMediaController {
     }
 
     private void getMessageByIdHandler(Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
         int messageId = Integer.parseInt(context.pathParam("message_id"));
         Message message = messageService.searchMessageById(messageId);
         if (message != null) {
-            ObjectMapper mapper = new ObjectMapper();
             context.json(mapper.writeValueAsString(message));
         } else {
-            context.status(400);
+            context.status(200);
         }
     }    
-/* 
-    private void deleteMessageHandler(Context context) throws JsonProcessingException{
-        int messageId = Integer.parseInt(context.pathParam("message_id"));
-        Message message = messageService.deleteAMessage(messageId);
-        if(message != null){
-            ObjectMapper mapper = new ObjectMapper();
-            context.json(mapper.writeValueAsString(message));
-        }else{
-            context.json(400);
-        }
-    }
-*/
+
     private void deleteMessageHandler(Context context) throws JsonProcessingException{
         ObjectMapper mapper = new ObjectMapper();
-        Message message = mapper.readValue(context.body(), Message.class);
+        //Message message = mapper.readValue(context.body(), Message.class);
         int messageId = Integer.parseInt(context.pathParam("message_id"));
-        Message deletedMessage = messageService.updateAMessage(messageId, message);
+        Message deletedMessage = messageService.deleteAMessage(messageId);
         if(deletedMessage == null){
-            context.status(400);
+            context.status(200);
         }else{
-            context.json(mapper.writeValueAsString(message));
+            context.json(mapper.writeValueAsString(deletedMessage));
         }
     }
     private void updateMessageHandler(Context context) throws JsonProcessingException{
