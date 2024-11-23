@@ -9,48 +9,21 @@ import java.util.List;
 
 
 public class AccountDAO {
-    /* 
-    // Create a new account
+    // create a new account
     public Account createAccount(Account account) {
         // Get a connection from the ConnectionUtil
         Connection connection = ConnectionUtil.getConnection(); 
-        String sql = "INSERT INTO Account (username, password) VALUES (?, ?)";
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        // getter methods
         try{
-            ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, account.getUsername());
-            ps.setString(2, account.getPassword());
-        // check if new account has been created?
-            ps.executeUpdate();
-        // if yes, set account with Account_id
-            rs = ps.getGeneratedKeys();
-            if(rs.next()){
-                    //account.setAccount_id(rs.getInt(1));
-                int account_num = (int)rs.getLong(1);
-                return new Account(account_num, account.getUsername(), account.getPassword()) ; // Return account with the right ID
-        
-            }
-        } catch(SQLException e){ // check for error in creating a new account
-            System.out.println("Error during creating a new account: " + e.getMessage());
-        } 
-        return null;
-    }
-
-*/
-
-    public Account createAccount(Account account) {
-        // Get a connection from the ConnectionUtil
-        Connection connection = ConnectionUtil.getConnection(); 
-        // getter methods
-        try{
+            // SQL query
             String sql = "INSERT INTO Account (username, password) VALUES (?, ?)";
+            // Prepared statement
             PreparedStatement ps = connection.prepareStatement(sql);
+           // retrieve the generated keys 
             ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            // set parameters
             ps.setString(1, account.getUsername());
             ps.setString(2, account.getPassword());
-           
+           // execute Query
             int affectedRows = ps.executeUpdate();
         // if yes, set account with Account_id
             if (affectedRows > 0){
@@ -66,7 +39,7 @@ public class AccountDAO {
         return null;
     }
 
-    // check if username is already present #return the Username/Account*
+    // check if username is already present 
     public Account checkIfUsernameExists(String username){
         Connection connection = ConnectionUtil.getConnection();
         try{
@@ -74,7 +47,7 @@ public class AccountDAO {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
-            //return rs.next(); //return true, if username already exists #while or if* 
+            //return rs.next();  
             while (rs.next()){
                 return new Account(rs.getInt("account_id"), rs.getString("username"), rs.getString("password"));
             }
@@ -98,7 +71,7 @@ public class AccountDAO {
                 return new Account(rs.getInt("account_id"), rs.getString("username"), rs.getString("password"));
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage()); //no priint statements *
+            System.out.println(e.getMessage()); 
         } 
         return null;
     }
@@ -112,7 +85,7 @@ public class AccountDAO {
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
     
-            while(rs.next()){ //** 2nd method */
+            while(rs.next()){ 
                 Account account = new Account(rs.getInt("account_id"), rs.getString("username"), rs.getString("password"));
                 accounts.add(account);
             }

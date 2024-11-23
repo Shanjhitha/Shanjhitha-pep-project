@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MessageDAO {
+    // create a new message
     public Message createMessage(Message message){
         Connection connection = ConnectionUtil.getConnection();
         try{
@@ -21,7 +22,6 @@ public class MessageDAO {
             ResultSet rs = ps.getGeneratedKeys();
             if (rs.next()) {
                 int new_MessageId = (int)rs.getLong(1);
-                //message.setMessage_id(new_MessageId);
                 return new Message(new_MessageId, message.getPosted_by(), message.getMessage_text(), message.getTime_posted_epoch());
             }
         } catch (SQLException e) {
@@ -29,7 +29,7 @@ public class MessageDAO {
         }
         return null;
     }
-        
+        // receive message by their ids
     public Message getMessageById(int message_id){
         Connection connection = ConnectionUtil.getConnection();
         try{
@@ -49,7 +49,7 @@ public class MessageDAO {
         }
         return null;
         }
-    
+    // retrieve all messages
     public List<Message> getAllMessages(){
         List<Message> messages = new ArrayList<>();
         Connection connection = ConnectionUtil.getConnection();
@@ -71,7 +71,7 @@ public class MessageDAO {
         }
         return messages;
     }
-
+    // retrieve a particular message
     public List<Message> getSpecificMessage(int posted_by){
         List<Message> a_message = new ArrayList<>();
         Connection connection = ConnectionUtil.getConnection();
@@ -94,7 +94,7 @@ public class MessageDAO {
         }
         return a_message;
     }
-
+    // update or edit a specific message
     public void updateMessage(int message_id, Message new_message){
         Connection connection = ConnectionUtil.getConnection();
         try{
@@ -107,7 +107,7 @@ public class MessageDAO {
             System.out.println(e.getMessage());
         }
     }
-
+     // delete a specific message using their id
     public Message deleteMessage(int message_id){
         Connection connection = ConnectionUtil.getConnection();
         try{

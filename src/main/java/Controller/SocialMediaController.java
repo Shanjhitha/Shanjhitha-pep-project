@@ -40,10 +40,11 @@ public class SocialMediaController {
         app.delete("/messages/{message_id}", this::deleteMessageHandler);
         app.patch("/messages/{message_id}", this::updateMessageHandler);
         app.get("accounts/{account_id}/messages", this::getMessageByUserHandler);
-        //app.start(8080);
         return app;
     }
 
+    // I followed the template from Library and Flight tracker mini project to create this controller
+    // and the whole project
     /**
      * This is an example handler for an example endpoint.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
@@ -103,7 +104,6 @@ public class SocialMediaController {
 
     private void deleteMessageHandler(Context context) throws JsonProcessingException{
         ObjectMapper mapper = new ObjectMapper();
-        //Message message = mapper.readValue(context.body(), Message.class);
         int messageId = Integer.parseInt(context.pathParam("message_id"));
         Message deletedMessage = messageService.deleteAMessage(messageId);
         if(deletedMessage == null){
@@ -112,6 +112,7 @@ public class SocialMediaController {
             context.json(mapper.writeValueAsString(deletedMessage));
         }
     }
+    
     private void updateMessageHandler(Context context) throws JsonProcessingException{
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(context.body(), Message.class);
